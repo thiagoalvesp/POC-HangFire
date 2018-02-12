@@ -1,4 +1,6 @@
 ﻿using Hangfire;
+using POC_HangFire.Models;
+using POC_HangFire.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,22 +16,25 @@ namespace POC_HangFire.Controllers
             return View();
         }
 
-        public ActionResult About()
+        [HttpPost]
+        public ActionResult AgendarTarefa(Agendar model, string ButtonType)
         {
-            //BackgroundJob.Enqueue(() => Console.WriteLine("Hello, world!"));
+            if (ButtonType == "Agendar")
+                //Como usar a notação CRON
+                //https://stackoverflow.com/questions/27221438/cron-every-day-at-6pm
+                RecurringJob.AddOrUpdate("xpto", () => Tarefa.Executar(model.Texto), Cron.Minutely, null,"default");
 
-            BackgroundJob.Schedule(() => Console.WriteLine("Hello, world"),TimeSpan.FromSeconds(15));
 
-            ViewBag.Message = "Your application description page.";
+            if (ButtonType == "Parar")
+                RecurringJob.RemoveIfExists("xpto");
 
-            return View();
+            if (ButtonType == "Executar")
+                Tarefa.Executar(model.Texto);
+
+            return View("Index", model);
+
         }
 
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
+       
     }
 }
