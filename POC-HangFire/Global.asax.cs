@@ -1,6 +1,13 @@
 ﻿using Hangfire;
+using Hangfire.Dashboard.Dark;
+using Hangfire.MemoryStorage;
+using Hangfire.RecurringJobExtensions;
+using Hangfire.SQLite;
+using POC_HangFire.App_Start;
+using POC_HangFire.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -20,8 +27,29 @@ namespace POC_HangFire
 
             // Storage is the only thing required for basic configuration.
             // Just discover what configuration options do you have.
-            GlobalConfiguration.Configuration
-           .UseSqlServerStorage("ConnectionStringDefault");
+
+
+            // GlobalConfiguration.Configuration
+            //.UseSqlServerStorage("ConnectionStringDefault");
+            //var options = new SQLiteStorageOptions();
+            //GlobalConfiguration.Configuration.UseSQLiteStorage("SQLiteHangfire", options);
+
+            //GlobalConfiguration.Configuration.UseDarkDashboard();
+            //GlobalConfiguration.Configuration.UseMemoryStorage();
+
+            HangfireBootstrapper.Instance.Start();
+
+            //CronJob.AddOrUpdate(typeof(RecurringJobService));
+
+
+
         }
+
+        protected void Application_End()
+        {
+            HangfireBootstrapper.Instance.Stop();
+        }
+
+
     }
 }
